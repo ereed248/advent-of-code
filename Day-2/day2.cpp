@@ -137,4 +137,12 @@ int main() {
     }
     std::cout << "The answer to part 1 is: " << total_sum_part1 << std::endl;
 
+    // Calculate answer to part 2
+    int total_sum_part2;
+    int game_product; 
+    for (int i = 0; i < parsed_game_data.size(); i++) {
+        total_sum_part2 += parsed_game_data[i][0] * parsed_game_data[i][1] * parsed_game_data[i][2];
+    }
+    std::cout << "The answer to part 2 is: " << total_sum_part2 << std::endl;
+
 }
