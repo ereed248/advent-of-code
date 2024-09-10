@@ -97,6 +97,54 @@ int calculate_card_score_part_1(std::vector<std::string> lines) {
     return total_sum;
 }
 
+struct CardCountInfo {
+    int num_matching;
+    int num_count; 
+};
+
+// Parse card info into data structure for part two. It will output
+// a CardInfo2 struct where num_matching is the number of current
+// nums matching winning numbs, and num_count is total number of cards. 
+CardCountInfo parse_card_count_info(CardInfo card_info) {
+    // go through each of current nums to see if they are in the winning set 
+    int counter = 0;
+    CardCountInfo card_count_info;
+    for (int i = 0; i < card_info.current_nums.size(); i++) {
+        counter += card_info.winning_nums.count(card_info.current_nums[i]);
+    }
+    card_count_info.num_matching = counter;
+    card_count_info.num_count = 1;
+    return card_count_info;
+}
+
+// Create list of card count info for part 2
+// Calculate the sum of all card scores 
+std::vector<CardCountInfo> create_card_count_info(std::vector<std::string> lines) {
+    std::vector<CardCountInfo> card_count_info_list;
+    for (int i = 0; i < lines.size(); i++) {
+        CardInfo card_info = parse_card_info(lines[i]);
+        card_count_info_list.push_back(parse_card_count_info(card_info)); 
+    }
+    return card_count_info_list;
+}
+
+// Calculate score for part 2
+int calculate_total_scratchcards(std::vector<CardCountInfo> card_count_info_list) {
+    int total_cards = 0;
+    for (int i = 0; i < card_count_info_list.size(); i++) {
+        for (int j = 0; j < card_count_info_list[i].num_matching; j++) {
+            // make sure j doesn't extend beyond bounds
+            int next_index = i + j + 1;
+            if (next_index < card_count_info_list.size()) {
+                card_count_info_list[next_index].num_count += card_count_info_list[i].num_count;
+            }
+        }
+        total_cards += card_count_info_list[i].num_count;
+    }
+    return total_cards;
+}
+
+
 int main() {
     // Open the file
     std::ifstream file("input.txt");
@@ -116,7 +164,7 @@ int main() {
     std::cout << "The answer to part 1 is: " << total_sum_part1 << std::endl;
 
     // Calculate answer to part 2
-    int total_sum_part2 = 0;
+    std::vector<CardCountInfo> card_count_info_list = create_card_count_info(lines);
+    int total_sum_part2 = calculate_total_scratchcards(card_count_info_list);
     std::cout << "The answer to part 2 is: " << total_sum_part2 << std::endl;
-
 }
